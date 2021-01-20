@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO chat</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <style>
+      #flash-message {
+        color: #008000;
+        text-align: center;
+        animation: animate 1.5s linear infinite;
+      }
+
+      @keyframes animate {
+        0% {
+          opacity: 0;
+        }
+
+        50% {
+          opacity: 0.7;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="container-fluid pt-3 vh-100 row flex-column align-items-md-center m-0"> -->
+    <div class="container-fluid vh-100 d-flex flex-column">
+      <div class="mb-auto overflow-auto">
+        <div class="container-fluid p-3">
+          <div class="row">
+            <div class="col-md-3">
+              <ul id="usersList" class="list-group"></ul>
+            </div>
+            <div class="col-md-9">
+              <div
+                id="messages"
+                class="d-flex flex-column align-items-md-center"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <div class="col-md-6">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="message" />
+            <button class="btn btn-dark" onclick="send()">Enviar</button>
+          </div>
+          <form
+            id="formSendFile"
+            action="/fileupload"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="input-group">
+              <input
+                type="file"
+                class="form-control"
+                name="filetoupload"
+                id="inputFile"
+                required
+              />
+              <input
+                type="submit"
+                class="btn btn-secondary"
+                value="Subir File"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/main.js"></script>
+  </body>
+</html>
