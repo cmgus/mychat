@@ -1,3 +1,6 @@
+(() => {
+  mainContent.scrollTop = mainContent.srollHeight
+})()
 const socket = io()
 let USERS = []
 let talker = prompt()
@@ -70,6 +73,7 @@ const addChatNotification = (notification) => {
       </small>
     </div>
   `
+  scrollBottom()
 }
 const addChatFlash = (username, noti) => {
   messages.innerHTML += `
@@ -79,6 +83,7 @@ const addChatFlash = (username, noti) => {
       </small>
     </div>
   `
+  scrollBottom()
 }
 const removeChatFlash = (username) => {
   const flash = document.getElementById(`flash-${username}`)
@@ -97,6 +102,7 @@ const addChatMessage = ({message, username}) => {
       </span>
     </div>
   `
+  scrollBottom()
 }
 const addChatImage = ({imageUrl, owner}) => {
   const isFromMe = talker === owner
@@ -110,6 +116,7 @@ const addChatImage = ({imageUrl, owner}) => {
     </figure>
   </div>
   `
+  scrollBottom()
 }
 
 function send() {
@@ -128,17 +135,23 @@ formSendFile.addEventListener('submit', async (e) => {
     method: 'POST',
     body: newFormData,
   })
+  //console.log(await result.json());
   const imageData = {
     ...(await result.json()),
     owner: talker,
   }
   addChatImage(imageData)
   socket.emit('new message:image', imageData)
+  scrollBottom()
 })
 async function sendFile() {
   await fetch('/fileupload', {
     method: 'POST',
   })
+}
+
+const scrollBottom = () => {
+  mainContent.scrollTop = mainContent.scrollHeight
 }
 
 window.addEventListener('close', () => {

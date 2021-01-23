@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
-const {join} = require('path')
+const {join, delimiter} = require('path')
 const io = require('socket.io')(http)
 const formidable = require('formidable')
 
@@ -62,8 +62,11 @@ app.post('/fileupload', (req, res) => {
     keepExtensions: true,
   })
   form.parse(req, (err, fields, files) => {
+    /* console.log(files);
+    res.json(files) */
+
     res.json({
-      imageUrl: `/uploads/${files.filetoupload.path.split('\\').reverse()[0]}`,
+      imageUrl: `/uploads/${files.filetoupload.path.split('/').reverse()[0]}`,
     })
   })
 })
