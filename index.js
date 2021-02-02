@@ -1,15 +1,22 @@
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
-const {join, delimiter} = require('path')
+const {join, basename} = require('path')
 const io = require('socket.io')(http)
+const ss = require('socket.io-stream')
 const formidable = require('formidable')
+const { createWriteStream, createReadStream } = require('fs')
 
 const USERS = []
 
 app.use(express.static(join(__dirname, 'public')))
-
+app.use(express.static(join(__dirname, 'node_modules/socket.io-stream/')))
 io.on('connection', (socket) => {
+  ss(socket).on('file', (stream) => {
+    stream.pipe(createWriteStream(`./public/uploads/${Date.now()}imagen.jpeg`))
+    // createReadStream('/public/uploads').pipe(stream)
+  })
+  console.log('user connected', socket.id)
   socket.on('new message', (data) => {
     socket.broadcast.emit('new message', {
       username: socket.username,
