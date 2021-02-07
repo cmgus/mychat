@@ -16,8 +16,9 @@
         const socket = io()
         function subirImagen() {
             const imagen = imagen_input.files[0]
+            console.log(imagen)
             const stream = ss.createStream()
-            ss(socket).emit('file', stream, { size: imagen.size })
+            ss(socket).emit('file', stream, { size: imagen.size, name: imagen.name })
             let blobStream = ss.createBlobReadStream(imagen)
             let size = 0
             blobStream.on('data', chunk => {

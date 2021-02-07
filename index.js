@@ -12,8 +12,8 @@ const USERS = []
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.static(join(__dirname, 'node_modules/socket.io-stream/')))
 io.on('connection', (socket) => {
-  ss(socket).on('file', (stream) => {
-    stream.pipe(createWriteStream(`./public/uploads/${Date.now()}imagen.jpeg`))
+  ss(socket).on('file', (stream, data) => {
+    stream.pipe(createWriteStream(`./public/uploads/${Date.now()}-${data.name}`))
     // createReadStream('/public/uploads').pipe(stream)
   })
   console.log('user connected', socket.id)
@@ -51,6 +51,9 @@ io.on('connection', (socket) => {
   socket.on('new message:image', (imageData) => {
     socket.broadcast.emit('new message:image', imageData)
   })
+  socket.on('new message:image2', (imageData) => {
+    socket.broadcast.emit('new message:image2', imageData)
+  })
   socket.on('disconnect', () => {
     socket.broadcast.emit('user left', {
       username: socket.username,
@@ -69,9 +72,6 @@ app.post('/fileupload', (req, res) => {
     keepExtensions: true,
   })
   form.parse(req, (err, fields, files) => {
-    /* console.log(files);
-    res.json(files) */
-
     res.json({
       imageUrl: `/uploads/${files.filetoupload.path.split('/').reverse()[0]}`,
     })

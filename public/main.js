@@ -47,6 +47,10 @@ socket.on('new message:image', (imageData) => {
   addChatImage(imageData)
 })
 
+socket.on('new message:image2', (imageData) => {
+  addChatImage2(imageData)
+})
+
 message.addEventListener('focus', (e) => {
   socket.emit('typing', talker)
 })
@@ -97,7 +101,7 @@ const addChatMessage = ({message, username}) => {
       <span class="bg-${
         isMine ? 'primary' : 'secondary'
       } d-inline-block text-white py-1 px-2 rounded">
-        <small class="d-block fw-bold">${username}</small>
+        <small class="d-block fw-bold">${isMine ? 'tí' : username}</small>
         ${message}
       </span>
     </div>
@@ -118,6 +122,20 @@ const addChatImage = ({imageUrl, owner}) => {
   `
   scrollBottom()
 }
+const addChatImage2 = ({buffer, owner}) => {
+  const isFromMe = talker === owner
+  messages.innerHTML += `
+  <div class="col-md-6 mb-3">
+    <figure class="figure">
+      <img class="figure-img img-fluid rounded" src="${buffer}" />
+      <figcaption class="figure-caption text-${isFromMe ? 'end' : 'start'}">
+        enviado por ${isFromMe ? 'tí' : owner}
+      </figcaption>
+    </figure>
+  </div>
+  `
+  scrollBottom()
+}
 
 function send() {
   addChatMessage({
@@ -128,20 +146,40 @@ function send() {
   // message.value = ''
 }
 
+// mi forma
+// formSendFile.addEventListener('submit', async (e) => {
+//   e.preventDefault()
+//   const newFormData = new FormData(e.currentTarget)
+//   const result = await fetch('/fileupload', {
+//     method: 'POST',
+//     body: newFormData,
+//   })
+//   //console.log(await result.json());
+//   const imageData = {
+//     ...(await result.json()),
+//     owner: talker,
+//   }
+//   addChatImage(imageData)
+//   socket.emit('new message:image', imageData)
+//   scrollBottom()
+// })
 formSendFile.addEventListener('submit', async (e) => {
   e.preventDefault()
-  const newFormData = new FormData(e.currentTarget)
-  const result = await fetch('/fileupload', {
-    method: 'POST',
-    body: newFormData,
-  })
-  //console.log(await result.json());
-  const imageData = {
-    ...(await result.json()),
-    owner: talker,
+  const file = inputFile.files[0]
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = (ev) => {
+    const buff = ev.target.result
+    console.log(file)
+    addChatImage2({
+      buffer: buff,
+      owner: talker
+    })
+    socket.emit('new message:image2', {
+      buffer: buff,
+      owner: talker
+    })
   }
-  addChatImage(imageData)
-  socket.emit('new message:image', imageData)
   scrollBottom()
 })
 async function sendFile() {
